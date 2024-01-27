@@ -8,7 +8,26 @@ const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
+const helmet = require("helmet");
 const app = express();
+
+app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
+app.use(helmet.frameguard({ action: "deny" }));
+app.use(helmet.xssFilter())
+app.use(helmet.noSniff())
+app.use(helmet.ieNoOpen())
+const ninetyDaysInSeconds = 90*24*60*60
+app.use(helmet.hsts({maxAge: ninetyDaysInSeconds, force: true}))
+app.use(helmet.dnsPrefetchControl())
+app.use(helmet.noCache())
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'", 'trusted-cdn.com'],
+    scriptSrc: ["'self'", 'trusted-cdn.com']
+  },
+}))
+app.use(express.static("public"));
+app.disable("strict-transport-security");
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
