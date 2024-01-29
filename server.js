@@ -9,8 +9,9 @@ const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const helmet = require("helmet");
+const {connectDB} = require("./db.js")
 const app = express();
-
+connectDB()
 app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
 app.use(helmet.frameguard({ action: "deny" }));
 app.use(helmet.xssFilter())
@@ -23,7 +24,8 @@ app.use(helmet.noCache())
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: ["'self'", 'trusted-cdn.com'],
-    scriptSrc: ["'self'", 'trusted-cdn.com']
+    scriptSrc: ["'self'", 'trusted-cdn.com'],
+    styleSrc: ["'self'"]
   },
 }))
 app.use(express.static("public"));
